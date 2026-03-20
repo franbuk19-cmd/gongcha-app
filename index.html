@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#C8102E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gong Cha">
+<title>Gong Cha Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #C8102E;
+  --red-dark: #8B0A1F;
+  --red-glow: rgba(200,16,46,0.3);
+  --gold: #D4A843;
+  --gold-light: #F2C75E;
+  --black: #080810;
+  --bg: #0D0D14;
+  --bg2: #13131E;
+  --bg3: #1A1A28;
+  --surface: #21213A;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #F4F0EB;
+  --muted: rgba(244,240,235,0.45);
+  --success: #00D68F;
+  --warn: #FFB347;
+  --danger: #FF4757;
+  --r: 18px;
+  --r-sm: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { height: 100%; }
+
+body {
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── SCREENS ── */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(30px);
+  transition: opacity .3s cubic-bezier(.4,0,.2,1), transform .3s cubic-bezier(.4,0,.2,1);
+  background: var(--bg);
+  -webkit-overflow-scrolling: touch;
+}
+.screen.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(0);
+}
+.screen.slide-back { transform: translateX(-30px); }
+
+/* ── SPLASH ── */
+#s-splash {
+  align-items: center;
+  justify-content: center;
+  background: var(--black);
+}
+.splash-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 100% 70% at 50% 0%, rgba(200,16,46,.22) 0%, transparent 65%),
+              radial-gradient(ellipse 60% 50% at 100% 100%, rgba(212,168,67,.08) 0%, transparent 55%);
+}
+.splash-inner { position: relative; z-index: 1; text-align: center; padding: 40px 32px; }
+
+.logo-ring {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--red-dark), var(--red));
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+  box-shadow: 0 0 80px rgba(200,16,46,.45), 0 0 30px rgba(200,16,46,.2);
+  position: relative;
+}
+.logo-ring::before {
+  content: '';
+  position: absolute; inset: -5px;
+  border-radius: 50%;
+  border: 1px solid rgba(200,16,46,.25);
+}
+.logo-ring::after {
+  content: '';
+  position: absolute; inset: -12px;
+  border-radius: 50%;
+  border: 1px solid rgba(200,16,46,.1);
+}
+.logo-kanji {
+  font-family: 'Playfair Display', serif;
+  font-size: 40px; font-weight: 900;
+  color: white; line-height: 1;
+}
+.splash-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px; font-weight: 700;
+  letter-spacing: .03em;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.splash-sub {
+  font-size: 11px; font-weight: 300;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.splash-dots {
+  display: flex; gap: 8px;
+  justify-content: center;
+  margin-top: 60px;
+}
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  opacity: .3;
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}
+.dot:nth-child(2) { animation-delay: .2s; }
+.dot:nth-child(3) { animation-delay: .4s; }
+@keyframes pulse-dot {
+  0%,100% { opacity: .2; transform: scale(.8); }
+  50%      { opacity: 1;  transform: scale(1.2); }
+}
+
+/* ── LOGIN ── */
+#s-login {
+  background: var(--black);
+  justify-content: flex-end;
+}
+.login-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px 24px;
+  position: relative;
+}
+.login-hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 90% 60% at 50% 10%, rgba(200,16,46,.18) 0%, transparent 60%);
+  pointer-events: none;
+}
+.login-brand {
+  position: relative; z-index: 1;
+  text-align: center;
+}
+.login-brand .ring {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--red-dark), var(--red));
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: 0 0 48px rgba(200,16,46,.4);
+}
+.login-brand .ring span {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; font-weight: 900; color: white;
+}
+.login-brand h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px; font-weight: 700; color: var(--text);
+}
+.login-brand p {
+  font-size: 10px; font-weight: 300;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--gold); margin-top: 4px;
+}
+
+.login-sheet {
+  background: var(--bg2);
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  border-top: 1px solid var(--border2);
+  padding: 28px 24px 40px;
+  padding-bottom: max(40px, calc(env(safe-area-inset-bottom) + 32px));
+}
+.login-sheet h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 700;
+  margin-bottom: 24px;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  display: flex; align-items: center;
+  padding: 16px 20px;
+  padding-top: max(16px, env(safe-area-inset-top));
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  position: sticky; top: 0; z-index: 10;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.tb-back {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 20px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  margin-right: 12px;
+  transition: all .15s;
+}
+.tb-back:active { transform: scale(.9); }
+.tb-info { flex: 1; }
+.tb-info h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px; font-weight: 700; line-height: 1.2;
+}
+.tb-info p { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.tb-pill {
+  background: var(--red);
+  color: white; font-size: 10px; font-weight: 600;
+  padding: 4px 10px; border-radius: 20px;
+  letter-spacing: .04em;
+}
+
+/* ── FORM ── */
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px;
+}
+.sel-wrap { position: relative; }
+.sel-wrap::after {
+  content: '▾';
+  position: absolute; right: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted); pointer-events: none;
+  font-size: 14px;
+}
+select, input[type=text], input[type=number], textarea {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  padding: 14px 16px;
+  appearance: none; -webkit-appearance: none;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+select:focus, input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(200,16,46,.12);
+}
+input[type=number] { -moz-appearance: textfield; }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; width: 100%;
+  padding: 16px 24px;
+  border-radius: var(--r-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: .07em; text-transform: uppercase;
+  border: none; cursor: pointer;
+  transition: all .18s; text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  position: relative; overflow: hidden;
+}
+.btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: white;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.btn:active::after { opacity: .08; }
+
+.btn-red   { background: var(--red); color: white; box-shadow: 0 4px 24px rgba(200,16,46,.4); }
+.btn-dark  { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
+.btn-green { background: var(--success); color: var(--black); box-shadow: 0 4px 20px rgba(0,214,143,.3); }
+.btn-ghost { background: transparent; color: var(--muted); font-size: 12px; padding: 12px; }
+.btn:disabled { opacity: .35; pointer-events: none; }
+.btn-sm { padding: 10px 16px; font-size: 11px; width: auto; border-radius: 10px; }
+
+/* ── HOME ── */
+#s-home { background: var(--bg); }
+
+.home-top {
+  padding: 24px 20px 20px;
+  padding-top: max(24px, env(safe-area-inset-top));
+  background: var(--bg);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.home-top::after {
+  content: '珍';
+  position: absolute;
+  right: -10px; top: -20px;
+  font-family: 'Playfair Display', serif;
+  font-size: 130px; font-weight: 900;
+  color: rgba(200,16,46,.04);
+  pointer-events: none; line-height: 1;
+}
+.home-hi {
+  font-size: 11px; font-weight: 300;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 3px;
+}
+.home-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 700;
+  color: var(--text); margin-bottom: 4px;
+}
+.home-meta {
+  font-size: 12px; color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+}
+.home-meta .dot-sep {
+  width: 3px; height: 3px; border-radius: 50%;
+  background: var(--red); flex-shrink: 0;
+}
+
+.turno-bar {
+  margin: 0 20px 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.turno-bar .t-date { font-size: 13px; color: var(--text); font-weight: 500; }
+.turno-bar .t-sub  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.turno-chip {
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  background: linear-gradient(135deg, var(--red-dark), var(--red));
+  color: white;
+}
+
+.section-title {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--muted); padding: 0 20px;
+  margin-bottom: 12px; flex-shrink: 0;
+}
+
+.mods-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 20px;
+  flex-shrink: 0;
+}
+
+.mod {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px 16px;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative; overflow: hidden;
+}
+.mod::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--mc, var(--red));
+}
+.mod::after {
+  content: attr(data-emoji);
+  position: absolute;
+  right: -4px; bottom: -8px;
+  font-size: 52px; opacity: .06;
+  pointer-events: none; line-height: 1;
+}
+.mod:active { transform: scale(.97); background: var(--bg3); }
+.mod .mod-emoji { font-size: 24px; margin-bottom: 10px; display: block; }
+.mod .mod-name  { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.mod .mod-sub   { font-size: 10px; color: var(--muted); }
+.mod .done-badge {
+  position: absolute; top: 10px; right: 10px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--success);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: var(--black); font-weight: 700;
+}
+
+.cierre-btn {
+  margin: 12px 20px 8px;
+  background: linear-gradient(135deg, var(--red-dark), var(--red));
+  border: none; border-radius: var(--r);
+  padding: 20px 24px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 16px;
+  width: calc(100% - 40px);
+  transition: all .2s;
+  box-shadow: 0 8px 32px rgba(200,16,46,.35);
+  flex-shrink: 0;
+  position: relative; overflow: hidden;
+}
+.cierre-btn::after {
+  content: '✅';
+  position: absolute; right: 16px;
+  font-size: 48px; opacity: .12;
+}
+.cierre-btn:active { transform: scale(.98); }
+.cierre-btn .c-icon { font-size: 28px; }
+.cierre-btn .c-text .c-title {
+  font-size: 15px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: white;
+}
+.cierre-btn .c-text .c-sub { font-size: 11px; color: rgba(255,255,255,.65); margin-top: 2px; }
+
+/* ── INVENTARIO ── */
+.search-bar {
+  position: relative; padding: 0 20px; margin-bottom: 12px;
+}
+.search-bar input {
+  padding-left: 40px; background: var(--bg2);
+}
+.search-bar .si {
+  position: absolute; left: 34px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px; color: var(--muted); pointer-events: none;
+}
+
+.cats {
+  display: flex; gap: 8px;
+  overflow-x: auto; padding: 0 20px 4px;
+  scrollbar-width: none; margin-bottom: 14px;
+}
+.cats::-webkit-scrollbar { display: none; }
+.cat {
+  flex-shrink: 0;
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: .04em;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--muted);
+  cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.cat.on { background: var(--red); border-color: var(--red); color: white; }
+
+.inv-list { padding: 0 20px; }
+
+.inv-row {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px; align-items: center;
+  transition: border-color .2s;
+}
+.inv-row.ok { border-color: rgba(0,214,143,.25); }
+.inv-row .ir-sku  { font-size: 9px; font-weight: 700; letter-spacing: .12em; color: var(--gold); margin-bottom: 2px; }
+.inv-row .ir-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.inv-row .ir-unit { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.inv-row .ir-inputs { display: flex; gap: 8px; align-items: flex-end; }
+
+.mini-inp { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.mini-inp span {
+  font-size: 8px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted);
+}
+.mini-inp input {
+  width: 68px; padding: 8px 6px;
+  text-align: center; font-size: 16px; font-weight: 700;
+  border-radius: 10px;
+}
+.mini-inp input.green {
+  border-color: rgba(0,214,143,.4);
+  color: var(--success);
+}
+
+/* ── VASOS ── */
+.vasos-wrap { padding: 0 20px; }
+.v-cards {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 16px;
+}
+.v-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px 12px;
+  text-align: center;
+}
+.v-card .ve { font-size: 40px; margin-bottom: 6px; }
+.v-card .vl {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.v-counter { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.v-btn {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid var(--border2);
+  background: var(--bg3); color: var(--text);
+  font-size: 22px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; -webkit-tap-highlight-color: transparent;
+}
+.v-btn:active { transform: scale(.88); background: var(--surface); }
+.v-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px; font-weight: 900;
+  color: var(--text); min-width: 44px; text-align: center;
+}
+.v-total {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 16px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px;
+}
+.v-total .vt-l { font-size: 13px; color: var(--muted); }
+.v-total .vt-r {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px; font-weight: 900; color: var(--gold);
+}
+
+/* ── CAJA ── */
+.caja-hero {
+  margin: 0 20px 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 22px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.caja-hero::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.ch-label {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px;
+}
+.ch-total {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px; font-weight: 900; color: var(--gold);
+  letter-spacing: -.02em; line-height: 1;
+}
+.ch-total span { font-size: 24px; opacity: .6; }
+.ch-dif {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 12px; font-weight: 600; margin-top: 10px;
+}
+.ch-dif.ok   { background: rgba(0,214,143,.12); color: var(--success); }
+.ch-dif.warn { background: rgba(255,71,87,.12);  color: var(--danger); }
+
+/* ── MERMA ── */
+.merma-list { padding: 0 20px; }
+.merma-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 14px; margin-bottom: 10px;
+  position: relative;
+}
+.mc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.mc-rm {
+  position: absolute; top: 10px; right: 10px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(255,71,87,.12); border: none;
+  color: var(--danger); font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+
+/* ── CIERRE ── */
+.cierre-hero-box {
+  margin: 0 20px 20px;
+  background: linear-gradient(135deg, rgba(200,16,46,.08), rgba(212,168,67,.04));
+  border: 1px solid rgba(200,16,46,.18);
+  border-radius: var(--r);
+  padding: 22px; text-align: center;
+}
+.chb-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 700; margin-bottom: 6px;
+}
+.chb-sub { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+.cklist { padding: 0 20px; }
+.ck-item {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 8px;
+  transition: border-color .25s;
+}
+.ck-item.done { border-color: rgba(0,214,143,.25); }
+.ck-ico {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+  transition: all .25s;
+}
+.ck-item.done .ck-ico { background: rgba(0,214,143,.15); }
+.ck-item.pending .ck-ico { background: var(--bg3); }
+.ck-txt .ck-lbl { font-size: 14px; font-weight: 500; }
+.ck-txt .ck-st  { font-size: 11px; margin-top: 2px; }
+.ck-item.done .ck-st    { color: var(--success); }
+.ck-item.pending .ck-st { color: var(--muted); }
+
+/* ── CONFIG ── */
+.cfg-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 16px;
+}
+
+/* ── TOAST ── */
+.toast-wrap {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  left: 16px; right: 16px;
+  z-index: 9999;
+  display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  padding: 14px 18px;
+  border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 500;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  animation: t-in .3s ease;
+  pointer-events: all;
+}
+.toast.s { background: #0d2e20; border: 1px solid rgba(0,214,143,.3); color: var(--success); }
+.toast.e { background: #2d0f14; border: 1px solid rgba(255,71,87,.3); color: var(--danger); }
+.toast.i { background: var(--bg2); border: 1px solid var(--border2); color: var(--text); }
+@keyframes t-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── LOADER ── */
+.loader {
+  position: fixed; inset: 0;
+  background: rgba(8,8,16,.8);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9998;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 18px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s;
+}
+.loader.on { opacity: 1; pointer-events: all; }
+.spin {
+  width: 44px; height: 44px;
+  border: 3px solid rgba(200,16,46,.15);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader p { font-size: 13px; color: var(--muted); font-weight: 300; }
+
+/* padding helpers */
+.px { padding: 0 20px; }
+.pb { padding-bottom: max(32px, env(safe-area-inset-bottom)); }
+.mb16 { margin-bottom: 16px; }
+.mb24 { margin-bottom: 24px; }
+.gap { height: 12px; flex-shrink: 0; }
+.section-lbl {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 10px;
+  display: block;
+}
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+</style>
+</head>
+<body>
+
+<!-- TOASTS -->
+<div class="toast-wrap" id="tw"></div>
+<!-- LOADER -->
+<div class="loader" id="ldr"><div class="spin"></div><p id="ldr-msg">Guardando...</p></div>
+
+<!-- ═══════════════ SPLASH ═══════════════ -->
+<div class="screen active" id="s-splash">
+  <div class="splash-bg"></div>
+  <div class="splash-inner">
+    <div class="logo-ring"><span class="logo-kanji">珍</span></div>
+    <div class="splash-title">Gong Cha</div>
+    <div class="splash-sub">Ecuador · Sistema Operativo</div>
+    <div class="splash-dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ LOGIN ═══════════════ -->
+<div class="screen" id="s-login">
+  <div class="login-hero">
+    <div class="login-hero-bg"></div>
+    <div class="login-brand">
+      <div class="ring"><span>珍</span></div>
+      <h1>Gong Cha</h1>
+      <p>Ecuador · Sistema Operativo</p>
+    </div>
+  </div>
+  <div class="login-sheet">
+    <h2>Iniciar turno</h2>
+    <div class="field">
+      <label>Tu tienda</label>
+      <div class="sel-wrap">
+        <select id="lg-tienda" onchange="onTiendaChange()">
+          <option value="">Selecciona tu tienda...</option>
+          <option>Paseo San Francisco</option>
+          <option>República del Salvador</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Tu nombre</label>
+      <div class="sel-wrap">
+        <select id="lg-emp">
+          <option value="">Primero elige la tienda</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Turno</label>
+      <div class="sel-wrap">
+        <select id="lg-turno">
+          <option value="APERTURA">☀️  Apertura</option>
+          <option value="CIERRE">🌙  Cierre</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-red mb16" onclick="doLogin()">Comenzar turno →</button>
+    <button class="btn btn-ghost" onclick="go('s-config')">⚙️  Configurar URL del sistema</button>
+  </div>
+</div>
+
+<!-- ═══════════════ HOME ═══════════════ -->
+<div class="screen" id="s-home">
+  <div class="home-top">
+    <div class="home-hi">Bienvenida,</div>
+    <div class="home-name" id="h-name">—</div>
+    <div class="home-meta">
+      <span id="h-tienda">—</span>
+      <div class="dot-sep"></div>
+      <span id="h-fecha">—</span>
+    </div>
+  </div>
+  <div class="turno-bar">
+    <div>
+      <div class="t-date" id="h-hora">—</div>
+      <div class="t-sub">Hora de ingreso</div>
+    </div>
+    <div class="turno-chip" id="h-turno">—</div>
+  </div>
+  <div class="section-title">Módulos del turno</div>
+  <div class="mods-grid" id="mods-grid">
+    <div class="mod" style="--mc:#3B82F6" data-emoji="🔐" onclick="go('s-loginreg')">
+      <span class="mod-emoji">🔐</span>
+      <div class="mod-name">Log In</div>
+      <div class="mod-sub">Registrar entrada</div>
+    </div>
+    <div class="mod" style="--mc:#10B981" data-emoji="📦" onclick="go('s-inv')">
+      <span class="mod-emoji">📦</span>
+      <div class="mod-name">Inventario</div>
+      <div class="mod-sub">Conteo de stock</div>
+    </div>
+    <div class="mod" style="--mc:#EF4444" data-emoji="⚠️" onclick="go('s-merma')">
+      <span class="mod-emoji">⚠️</span>
+      <div class="mod-name">Merma</div>
+      <div class="mod-sub">Registrar pérdida</div>
+    </div>
+    <div class="mod" style="--mc:#F59E0B" data-emoji="🧋" onclick="go('s-vasos')">
+      <span class="mod-emoji">🧋</span>
+      <div class="mod-name">Vasos</div>
+      <div class="mod-sub">Conteo del turno</div>
+    </div>
+    <div class="mod" style="--mc:#8B5CF6" data-emoji="💵" onclick="go('s-caja')">
+      <span class="mod-emoji">💵</span>
+      <div class="mod-name">Caja</div>
+      <div class="mod-sub">Cierre de ventas</div>
+    </div>
+    <div class="mod" style="--mc:#06B6D4" data-emoji="📋" onclick="go('s-pedidos')">
+      <span class="mod-emoji">📋</span>
+      <div class="mod-name">Pedidos</div>
+      <div class="mod-sub">Estado de stock</div>
+    </div>
+  </div>
+  <button class="cierre-btn" onclick="go('s-cierre')">
+    <span class="c-icon">✅</span>
+    <div class="c-text">
+      <div class="c-title">Cerrar Turno</div>
+      <div class="c-sub">Guardar todo y terminar el día</div>
+    </div>
+  </button>
+  <div class="gap"></div>
+  <div class="pb"></div>
+</div>
+
+<!-- ═══════════════ LOG IN REG ═══════════════ -->
+<div class="screen" id="s-loginreg">
+  <div class="topbar">
+    <button class="tb-back" onclick="go('s-home')">←</button>
+    <div class="tb-info"><h2>Log In</h2><p>Registro de entrada</p></div>
+  </div>
+  <div class="px" style="padding-top:24px">
+    <div class="field">
+      <label>Tipo de registro</label>
+      <div class="sel-wrap">
+        <select id="lr-tipo">
+          <option value="ENTRADA">Entrada al turno</option>
+          <option value="SALIDA">Salida del turno</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Nota (opcional)</label>
+      <input type="text" id="lr-nota" placeholder="Ej: llegué 5 min tarde...">
+    </div>
+    <button class="btn btn-red" onclick="guardarLogin()">Registrar →</button>
+  </div>
+  <div class="pb"></div>
+</div>
+
+<!-- ═══════════════ INVENTARIO ═══════════════ -->
+<div class="screen" id="s-inv">
+  <div class="topbar">
+    <button class="tb-back" onclick="go('s-home')">←</button>
+    <div class="tb-info">
+      <h2>Inventario</h2>
+      <p id="inv-label">Cargando...</p>
+    </div>
+    <div class="tb-pill" id="inv-badge">0</div>
+  </div>
+  <div class="search-bar" style="padding-top:16px">
+    <span class="si">🔍</span>
+    <input type="text" id="inv-q" placeholder="Buscar producto o SKU..." oninput="renderInv()">
+  </div>
+  <div class="cats" id="cats"></div>
+  <div class="inv-list" id="inv-list"></div>
+  <div class="px" style="padding-top:16px">
+    <button class="btn btn-red" onclick="guardarInv()">💾  Guardar inventario</button>
+  </div>
+  <div class="pb"></div>
+</div>
+
+<!-- ═══════════════ MERMA ═══════════════ -->
+<div class="screen" id="s-merma">
+  <div class="topbar">
+    <button class="tb-back" onclick="go('s-home')">←</button>
+    <div class="tb-info"><h2>Merma</h2><p>Registro de pérdidas</p></div>
+  </div>
+  <div class="merma-list" style="padding-top:20px" id="merma-list"></div>
+  <div class="px mb16">
+    <button class="btn btn-dark" onclick="addMerma()">+ Agregar ítem</button>
+  </div>
+  <div class="px">
+    <button class="btn btn-red" onclick="guardarMerma()">💾  Guardar merma</button>
+  </div>
+  <div class="pb"></div>
+</div>
+
+<!-- ═══════════════ VASOS ═══════════════ -->
+<div class="screen" id="s-vasos">
+  <div class="topbar">
+    <button class="tb-back" onclick="go('s-home')">←</button>
+    <div class="tb-info"><h2>Vasos</h2><p>Conteo del turno</p></div>
+  </div>
+  <div class="vasos-wrap" style="padding-top:24px">
+    <div class="v-cards">
+      <div class="v-card">
+        <div class="ve">🧋</div>
+        <div class="vl">Grande</div>
+        <div class="v-counter">
+          <button class="v-btn" onclick="cv('g',-1)">−</button>
+          <div class="v-num" id="vn-g">0</div>
+          <button class="v-btn" onclick="cv('g',1)">+</button>
+        </div>
+      </div>
+      <div class="v-card">
+        <div class="ve">🥤</div>
+        <div class="vl">Mediano</div>
+        <div class="v-counter">
+          <button class="v-btn" onclick="cv('m',-1)">−</button>
+          <div class="v-num" id="vn-m">0</div>
+          <button class="v-btn" onclick="cv('m',1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="v-total">
+      <div class="vt-l">Total vasos del turno</div>
+      <div class="vt-r" id="v-tot">0</div>
+    </div>
+    <button class="btn btn-red" onclick="guardarVasos()">💾  Guardar conteo</button>
+  </div>
+  <div class="pb"></div>
+</div>
+
+<!-- ═══════════════ CAJA ═══════════════ -->
+<div class="screen" id="s-caja">
+  <div class="topbar">
+    <button class="tb-back" onclick="go('s-home')">←</button>
+    <div class="tb-info"><h2>Caja</h2><p>Cierre de ventas</p></div>
+  </div>
+  <div class="caja-hero">
+    <div class="ch-label">Total ventas del turno</div>
+    <div class="ch-total" id="c-tot"><span>$</span>0.00</div>
+    <div id="c-dif"></div>
+  </div>
+  <div class="px">
+    <div class="field"><label>Efectivo recibido ($)</label>
+      <input type="number" id="c-ef" placeholder="0.00" step="0.01" oninput="calcCaja()"></div>
+    <div class="field"><label>Tarjeta ($)</label>
+      <input type="number" id="c-tar" placeholder="0.00" step="0.01" oninput="calcCaja()"></div>
+    <div class="field"><label>Transferencia ($)</label>
+      <input type="number" id="c-tra" placeholder="0.00" step="0.01" oninput="calcCaja()"></div>
+    <div class="field"><label>Fondo inicial ($)</label>
+      <input type="number" id="c-fon" placeholder="0.00" step="0.01" oninput="calcCaja()"></div>
+    <div class="field"><label>Nota</label>
+      <input type="text" id="c-nota" placeholder="Observaciones..."></div>
+    <button class="btn btn-red" onclick="guardarCaja()">💾  Guardar caja</button>
+  </div>
+  <div class="pb"></div>
+</div>
+
+<!-- ═══════════════ PEDIDOS ═══════════════ -->
+<div class="screen" id="s-pedidos">
+  <div class="topbar">
+    <button class="tb-back" onclick="go('s-home')">←</button>
+    <div class="tb-info"><h2>Pedidos</h2><p>Solo lectura</p></div>
+  </div>
+  <div class="px" style="padding-top:20px">
+    <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px">
+      Los pedidos se generan automáticamente al cerrar el turno según el stock vigente.
+    </p>
+    <div id="ped-list">
+      <div style="text-align:center;padding:48px 0;color:var(--muted);font-size:13px">
+        Cierra el turno para ver los pedidos generados.
+      </div>
+    </div>
+  </div>
+  <div class="pb"></div>
+</div>
+
+<!-- ═══════════════ CIERRE ═══════════════ -->
+<div class="screen" id="s-cierre">
+  <div class="topbar">
+    <button class="tb-back" onclick="go('s-home')">←</button>
+    <div class="tb-info"><h2>Cerrar Turno</h2><p>Verificación final</p></div>
+  </div>
+  <div style="padding-top:20px">
+    <div class="cierre-hero-box">
+      <div class="chb-title">¿Todo listo?</div>
+      <div class="chb-sub">Revisa el checklist antes de confirmar el cierre.</div>
+    </div>
+    <div class="px"><span class="section-lbl">Checklist del turno</span></div>
+    <div class="cklist" id="cklist"></div>
+    <div class="px" style="padding-top:8px">
+      <button class="btn btn-green mb16" id="btn-cierre" onclick="ejecutarCierre()">
+        ✅  Confirmar cierre de turno
+      </button>
+      <button class="btn btn-ghost" onclick="go('s-home')">Volver al menú</button>
+    </div>
+  </div>
+  <div class="pb"></div>
+</div>
+
+<!-- ═══════════════ CONFIG ═══════════════ -->
+<div class="screen" id="s-config">
+  <div class="topbar">
+    <button class="tb-back" onclick="go('s-login')">←</button>
+    <div class="tb-info"><h2>Configuración</h2><p>URL del sistema</p></div>
+  </div>
+  <div class="px" style="padding-top:24px">
+    <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px">
+      Pega aquí la URL del Web App de Google Apps Script que publicaste en el paso anterior.
+    </p>
+    <div class="field">
+      <label>URL del Web App</label>
+      <input type="text" id="cfg-url" placeholder="https://script.google.com/macros/s/...">
+    </div>
+    <button class="btn btn-red mb16" onclick="saveConfig()">Guardar URL</button>
+    <button class="btn btn-dark" onclick="testConfig()">🔗  Testear conexión</button>
+  </div>
+  <div class="pb"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATOS
+// ═══════════════════════════════════════
+const EMPLEADOS = {
+  'Paseo San Francisco': [
+    {c:'EMP001',n:'Juli',r:'Store Manager'},
+    {c:'EMP002',n:'Fernanda',r:'Admin'},
+    {c:'EMP003',n:'Domenica',r:'Barista'},
+    {c:'EMP004',n:'Vanesa',r:'Barista'},
+    {c:'EMP005',n:'Bryan',r:'Barista'},
+  ],
+  'República del Salvador': [
+    {c:'EMP006',n:'Sherley',r:'Store Manager'},
+    {c:'EMP007',n:'Andrea',r:'Barista'},
+    {c:'EMP008',n:'Luis',r:'Barista'},
+    {c:'EMP009',n:'Valeria',r:'Barista'},
+    {c:'EMP010',n:'Fernanda',r:'Admin'},
+  ]
+};
+
+const SKUS = [
+  {s:'A001',n:'PCP',u:'bolsa (2kg)',c:'POLVOS'},
+  {s:'A002',n:'TARO',u:'bolsa (1kg)',c:'POLVOS'},
+  {s:'A003',n:'HOUSE SPECIAL',u:'bolsa (400g)',c:'POLVOS'},
+  {s:'A004',n:'MATCHA',u:'bolsa (1kg)',c:'POLVOS'},
+  {s:'A005',n:'PUDDING',u:'bolsa (1kg)',c:'POLVOS'},
+  {s:'A006',n:'TÉ NEGRO',u:'bolsa (150g)',c:'TE'},
+  {s:'A007',n:'TÉ VERDE',u:'bolsa (150g)',c:'TE'},
+  {s:'A008',n:'TÉ OOLONG',u:'bolsa (150g)',c:'TE'},
+  {s:'A009',n:'PERLAS',u:'bolsa (3kg)',c:'TOPPINGS'},
+  {s:'A010',n:'CAFÉ',u:'bolsa (120g)',c:'POLVOS'},
+  {s:'A011',n:'LECHE ENTERA',u:'1000ml',c:'LACTEOS'},
+  {s:'A012',n:'LECHE DESLACT.',u:'1000ml',c:'LACTEOS'},
+  {s:'A013',n:'CREMA DE LECHE',u:'400ml',c:'LACTEOS'},
+  {s:'A014',n:'MANTEQUILLA',u:'bloque 100g',c:'LACTEOS'},
+  {s:'A015',n:'LECHE CONDENSADA',u:'420g',c:'LACTEOS'},
+  {s:'A016',n:'SYRUP AZÚCAR',u:'botella 3.3kg',c:'SYRUPS'},
+  {s:'A017',n:'MANGO SYRUP',u:'botella 2.5kg',c:'SYRUPS'},
+  {s:'A018',n:'MARACUYÁ SYRUP',u:'botella 2.5kg',c:'SYRUPS'},
+  {s:'A019',n:'DURAZNO SYRUP',u:'botella 2.4kg',c:'SYRUPS'},
+  {s:'A020',n:'FRESA SYRUP',u:'botella 1.3kg',c:'SYRUPS'},
+  {s:'A021',n:'BROWN SUGAR SYRUP',u:'botella 1.3kg',c:'SYRUPS'},
+  {s:'A022',n:'STAR JELLY',u:'bolsa 2kg',c:'TOPPINGS'},
+  {s:'A023',n:'FRESA POPPING',u:'bolsa 2kg',c:'TOPPINGS'},
+  {s:'A024',n:'MANGO POPPING',u:'bolsa 2kg',c:'TOPPINGS'},
+  {s:'A025',n:'AZÚCAR MORENA 5KG',u:'bolsa 5kg',c:'MATERIA PRIMA'},
+  {s:'A026',n:'TAPA PLANA',u:'paq. 50und',c:'DESECHABLES'},
+  {s:'A027',n:'TAPA DOMO',u:'paq. 50und',c:'DESECHABLES'},
+  {s:'A028',n:'TAPA ROJA',u:'paq. 50und',c:'DESECHABLES'},
+  {s:'A029',n:'SORBETES',u:'paq. 50und',c:'DESECHABLES'},
+  {s:'A030',n:'VASOS MEDIANOS',u:'paq. 100und',c:'DESECHABLES'},
+  {s:'A031',n:'VASOS LARGOS',u:'paq. 50und',c:'DESECHABLES'},
+  {s:'A034',n:'SERVILLETAS',u:'paq. 100und',c:'DESECHABLES'},
+  {s:'A035',n:'PORTAVASOS',u:'paq. 50und',c:'DESECHABLES'},
+  {s:'A036',n:'FUNDAS GRANDES',u:'paq. 25und',c:'DESECHABLES'},
+  {s:'A037',n:'FUNDAS PEQUEÑAS',u:'paq. 25und',c:'DESECHABLES'},
+  {s:'A069',n:'OREO',u:'unidad',c:'TOPPINGS'},
+  {s:'A072',n:'JELLY DE COCO',u:'unidad',c:'TOPPINGS'},
+  {s:'A073',n:'WAFFLES',u:'unidad',c:'FOOD'},
+  {s:'A074',n:'AGUA',u:'unidad',c:'SLP'},
+];
+
+// ═══════════════════════════════════════
+// ESTADO
+// ═══════════════════════════════════════
+const S = {
+  tienda:'', emp:'', turno:'',
+  apiUrl: localStorage.getItem('gc_url') || '',
+  inv: {},
+  vasos: {g:0, m:0},
+  merma: [],
+  done: {login:false, inv:false, merma:false, vasos:false, caja:false}
+};
+
+// ═══════════════════════════════════════
+// NAVEGACIÓN
+// ═══════════════════════════════════════
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  el.scrollTop = 0;
+  if (id === 's-inv')    setupInv();
+  if (id === 's-cierre') setupCierre();
+  if (id === 's-merma')  setupMerma();
+  if (id === 's-config') document.getElementById('cfg-url').value = S.apiUrl;
+}
+
+// ═══════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════
+function onTiendaChange() {
+  const t = document.getElementById('lg-tienda').value;
+  const sel = document.getElementById('lg-emp');
+  sel.innerHTML = '<option value="">Selecciona tu nombre...</option>';
+  if (t && EMPLEADOS[t]) {
+    EMPLEADOS[t].forEach(e => {
+      sel.innerHTML += `<option value="${e.c}">${e.n} · ${e.r}</option>`;
+    });
+  }
+}
+
+function doLogin() {
+  const t = document.getElementById('lg-tienda').value;
+  const ec = document.getElementById('lg-emp').value;
+  const tu = document.getElementById('lg-turno').value;
+  if (!t || !ec) { toast('Selecciona tienda y nombre', 'e'); return; }
+
+  const emps = EMPLEADOS[t];
+  const emp = emps.find(e => e.c === ec);
+  S.tienda = t; S.emp = emp ? emp.n : ec; S.turno = tu;
+
+  const now = new Date();
+  document.getElementById('h-name').textContent   = S.emp;
+  document.getElementById('h-tienda').textContent = S.tienda;
+  document.getElementById('h-fecha').textContent  = now.toLocaleDateString('es-EC',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('h-hora').textContent   = now.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('h-turno').textContent  = S.turno;
+
+  go('s-home');
+  toast('¡Bienvenida, ' + S.emp + '! 🧋', 's');
+  api({action:'login', tienda:S.tienda, empleado:S.emp, turno:S.turno, tipo:'ENTRADA'}).catch(()=>{});
+}
+
+async function guardarLogin() {
+  const tipo = document.getElementById('lr-tipo').value;
+  const nota = document.getElementById('lr-nota').value;
+  load('Registrando...');
+  try {
+    await api({action:'login', tienda:S.tienda, empleado:S.emp, turno:S.turno, tipo, nota});
+    S.done.login = true;
+    markDone('login');
+    toast('Registro guardado ✓', 's');
+    go('s-home');
+  } catch(e) { toast(e.message,'e'); } finally { unload(); }
+}
+
+// ═══════════════════════════════════════
+// INVENTARIO
+// ═══════════════════════════════════════
+let catA = 'TODOS';
+
+function setupInv() {
+  const cats = ['TODOS', ...new Set(SKUS.map(s => s.c))];
+  document.getElementById('cats').innerHTML = cats.map(c =>
+    `<button class="cat ${c===catA?'on':''}" onclick="setcat('${c}')">${c}</button>`
+  ).join('');
+  renderInv();
+  updInvBadge();
+}
+
+function setcat(c) {
+  catA = c;
+  document.querySelectorAll('.cat').forEach(el => el.classList.toggle('on', el.textContent === c));
+  renderInv();
+}
+
+function renderInv() {
+  const q = (document.getElementById('inv-q').value||'').toLowerCase();
+  const list = SKUS.filter(s =>
+    (catA==='TODOS'||s.c===catA) &&
+    (!q || s.n.toLowerCase().includes(q) || s.s.toLowerCase().includes(q))
+  );
+
+  document.getElementById('inv-list').innerHTML = list.map(s => {
+    const d = S.inv[s.s] || {};
+    const ok = d.cnt !== undefined && d.cnt !== '';
+    return `
+    <div class="inv-row ${ok?'ok':''}" id="ir-${s.s}">
+      <div>
+        <div class="ir-sku">${s.s}</div>
+        <div class="ir-name">${s.n}</div>
+        <div class="ir-unit">${s.u}</div>
+      </div>
+      <div class="ir-inputs">
+        <div class="mini-inp">
+          <span>Ingreso</span>
+          <input type="number" min="0" placeholder="0"
+            value="${d.ing||''}" id="ig-${s.s}"
+            onchange="upd('${s.s}')">
+        </div>
+        <div class="mini-inp">
+          <span>Conteo ★</span>
+          <input type="number" min="0" placeholder="—"
+            value="${d.cnt!==undefined?d.cnt:''}" id="ct-${s.s}"
+            class="${ok?'green':''}"
+            onchange="upd('${s.s}')">
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function upd(sku) {
+  const ig = document.getElementById('ig-'+sku);
+  const ct = document.getElementById('ct-'+sku);
+  S.inv[sku] = { ing: ig.value||'0', cnt: ct.value };
+  if (ct.value !== '') {
+    ct.classList.add('green');
+    document.getElementById('ir-'+sku).classList.add('ok');
+  }
+  updInvBadge();
+}
+
+function updInvBadge() {
+  const n = Object.values(S.inv).filter(d=>d.cnt!=='').length;
+  document.getElementById('inv-badge').textContent = n;
+  document.getElementById('inv-label').textContent = n+' / '+SKUS.length+' contados';
+}
+
+async function guardarInv() {
+  const items = SKUS
+    .filter(s => S.inv[s.s] && S.inv[s.s].cnt !== '')
+    .map(s => ({sku:s.s, conteo:S.inv[s.s].cnt, ingreso:S.inv[s.s].ing||'0'}));
+  if (!items.length) { toast('Ingresa al menos un conteo','e'); return; }
+  load('Guardando inventario...');
+  try {
+    await api({action:'inventario', tienda:S.tienda, empleado:S.emp, turno:S.turno, items});
+    S.done.inv = true;
+    markDone('inv');
+    toast('Inventario guardado: '+items.length+' ítems ✓','s');
+    go('s-home');
+  } catch(e) { toast(e.message,'e'); } finally { unload(); }
+}
+
+// ═══════════════════════════════════════
+// MERMA
+// ═══════════════════════════════════════
+function setupMerma() {
+  if (!S.merma.length) S.merma.push({prod:'',cant:'',mot:'ACCIDENTE'});
+  renderMerma();
+}
+
+function addMerma() {
+  S.merma.push({prod:'',cant:'',mot:'ACCIDENTE'});
+  renderMerma();
+}
+
+function renderMerma() {
+  const mots = ['VENCIMIENTO','ACCIDENTE','PRODUCCION','OTRO'];
+  document.getElementById('merma-list').innerHTML = S.merma.map((it,i) => `
+    <div class="merma-card">
+      <button class="mc-rm" onclick="rmMerma(${i})">✕</button>
+      <div class="mc-row">
+        <div class="field" style="margin:0">
+          <label>SKU / Producto</label>
+          <input type="text" placeholder="Ej: PERLAS" value="${it.prod}"
+            oninput="S.merma[${i}].prod=this.value">
+        </div>
+        <div class="field" style="margin:0">
+          <label>Cantidad</label>
+          <input type="number" min="0" placeholder="0" value="${it.cant}"
+            oninput="S.merma[${i}].cant=this.value">
+        </div>
+      </div>
+      <div class="field" style="margin-top:10px;margin-bottom:0">
+        <label>Motivo</label>
+        <div class="sel-wrap">
+          <select onchange="S.merma[${i}].mot=this.value">
+            ${mots.map(m=>`<option ${it.mot===m?'selected':''}>${m}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function rmMerma(i) {
+  S.merma.splice(i,1);
+  if (!S.merma.length) S.merma.push({prod:'',cant:'',mot:'ACCIDENTE'});
+  renderMerma();
+}
+
+async function guardarMerma() {
+  const items = S.merma.filter(m=>m.prod&&m.cant>0)
+    .map(m=>({sku:'',producto:m.prod,cantidad:m.cant,motivo:m.mot,nota:''}));
+  if (!items.length) { toast('Agrega al menos un ítem con cantidad','e'); return; }
+  load('Guardando merma...');
+  try {
+    await api({action:'merma', tienda:S.tienda, empleado:S.emp, items});
+    S.done.merma = true;
+    markDone('merma');
+    S.merma = [];
+    toast('Merma registrada ✓','s');
+    go('s-home');
+  } catch(e) { toast(e.message,'e'); } finally { unload(); }
+}
+
+// ═══════════════════════════════════════
+// VASOS
+// ═══════════════════════════════════════
+function cv(t, d) {
+  S.vasos[t] = Math.max(0, S.vasos[t] + d);
+  document.getElementById('vn-'+t).textContent = S.vasos[t];
+  document.getElementById('v-tot').textContent = S.vasos.g + S.vasos.m;
+}
+
+async function guardarVasos() {
+  const tot = S.vasos.g + S.vasos.m;
+  if (!tot) { toast('Registra al menos 1 vaso','e'); return; }
+  load('Guardando vasos...');
+  try {
+    await api({action:'vasos', tienda:S.tienda, empleado:S.emp, turno:S.turno,
+      grande:S.vasos.g, mediano:S.vasos.m});
+    S.done.vasos = true;
+    markDone('vasos');
+    toast('Vasos guardados: '+tot+' total ✓','s');
+    go('s-home');
+  } catch(e) { toast(e.message,'e'); } finally { unload(); }
+}
+
+// ═══════════════════════════════════════
+// CAJA
+// ═══════════════════════════════════════
+function calcCaja() {
+  const ef  = +document.getElementById('c-ef').value  || 0;
+  const tar = +document.getElementById('c-tar').value || 0;
+  const tra = +document.getElementById('c-tra').value || 0;
+  const fon = +document.getElementById('c-fon').value || 0;
+  const tot = ef + tar + tra;
+  const dif = ef - fon;
+  document.getElementById('c-tot').innerHTML = `<span>$</span>${tot.toFixed(2)}`;
+  const dc = document.getElementById('c-dif');
+  dc.innerHTML = (ef||fon) ? `
+    <span class="ch-dif ${Math.abs(dif)<=5?'ok':'warn'}">
+      ${dif>=0?'+':''}$${dif.toFixed(2)} diferencia efectivo
+    </span>` : '';
+}
+
+async function guardarCaja() {
+  const ef  = document.getElementById('c-ef').value;
+  const tar = document.getElementById('c-tar').value;
+  const tra = document.getElementById('c-tra').value;
+  const fon = document.getElementById('c-fon').value;
+  if (!ef && !tar && !tra) { toast('Ingresa al menos un valor de venta','e'); return; }
+  load('Guardando caja...');
+  try {
+    await api({action:'caja', tienda:S.tienda, empleado:S.emp, turno:S.turno,
+      efectivo:ef||'0', tarjeta:tar||'0', transferencia:tra||'0',
+      fondo_inicial:fon||'0', nota:document.getElementById('c-nota').value});
+    S.done.caja = true;
+    markDone('caja');
+    toast('Caja guardada ✓','s');
+    go('s-home');
+  } catch(e) { toast(e.message,'e'); } finally { unload(); }
+}
+
+// ═══════════════════════════════════════
+// CIERRE
+// ═══════════════════════════════════════
+const CK_ITEMS = [
+  {k:'login',  e:'🔐', l:'Log In registrado',          req:false},
+  {k:'inv',    e:'📦', l:'Inventario contado',          req:true},
+  {k:'merma',  e:'⚠️', l:'Merma registrada (si aplica)',req:false},
+  {k:'vasos',  e:'🧋', l:'Vasos contados',              req:false},
+  {k:'caja',   e:'💵', l:'Caja cerrada',                req:true},
+];
+
+function setupCierre() {
+  document.getElementById('cklist').innerHTML = CK_ITEMS.map(it => {
+    const ok = S.done[it.k];
+    return `
+    <div class="ck-item ${ok?'done':'pending'}">
+      <div class="ck-ico">${ok?'✓':it.e}</div>
+      <div class="ck-txt">
+        <div class="ck-lbl">${it.l}</div>
+        <div class="ck-st">${ok?'Completado':'Pendiente'}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const falta = CK_ITEMS.filter(it=>it.req && !S.done[it.k]);
+  document.getElementById('btn-cierre').disabled = falta.length > 0;
+}
+
+async function ejecutarCierre() {
+  load('Cerrando turno...');
+  try {
+    await api({action:'cierre_turno', tienda:S.tienda, empleado:S.emp, turno:S.turno});
+    toast('¡Turno cerrado correctamente! ✓','s');
+    setTimeout(() => {
+      S.done = {login:false,inv:false,merma:false,vasos:false,caja:false};
+      S.inv = {}; S.vasos = {g:0,m:0}; S.merma = [];
+      document.getElementById('vn-g').textContent = '0';
+      document.getElementById('vn-m').textContent = '0';
+      document.getElementById('v-tot').textContent = '0';
+      go('s-login');
+    }, 2000);
+  } catch(e) { toast(e.message,'e'); } finally { unload(); }
+}
+
+// ═══════════════════════════════════════
+// MÓDULOS DONE BADGE
+// ═══════════════════════════════════════
+const DONE_MAP = {
+  login:'s-loginreg', inv:'s-inv', merma:'s-merma', vasos:'s-vasos', caja:'s-caja'
+};
+function markDone(k) {
+  const mods = document.querySelectorAll('#mods-grid .mod');
+  const screens = Object.values(DONE_MAP);
+  const idx = Object.keys(DONE_MAP).indexOf(k);
+  if (idx >= 0 && mods[idx]) {
+    if (!mods[idx].querySelector('.done-badge')) {
+      const b = document.createElement('div');
+      b.className = 'done-badge'; b.textContent = '✓';
+      mods[idx].appendChild(b);
+    }
+  }
+}
+
+// ═══════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════
+function saveConfig() {
+  const u = document.getElementById('cfg-url').value.trim();
+  if (!u) { toast('Ingresa la URL','e'); return; }
+  S.apiUrl = u;
+  localStorage.setItem('gc_url', u);
+  toast('URL guardada ✓','s');
+  go('s-login');
+}
+
+async function testConfig() {
+  const u = document.getElementById('cfg-url').value.trim();
+  if (!u) { toast('Ingresa la URL primero','e'); return; }
+  S.apiUrl = u;
+  load('Testeando...');
+  try {
+    const r = await api({action:'ping'});
+    toast('✅ Conectado: '+r.msg,'s');
+  } catch(e) { toast('❌ '+e.message,'e'); } finally { unload(); }
+}
+
+// ═══════════════════════════════════════
+// API — llama directo a Google Apps Script
+// Funciona desde Netlify sin CORS
+// ═══════════════════════════════════════
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzYUmZQsyBi47tjfDeckYRbmOeT3Rp0ZKOZGURpTdqS9ixNpwYt7sn0a0SQ9ivAoxU_/exec';
+
+async function api(data) {
+  // Ping responde localmente sin llamar a Google
+  if (data.action === 'ping') {
+    return { ok: true, msg: 'OK — Gong Cha v3.0 local' };
+  }
+
+  // Enviar datos a Google Apps Script
+  // Separamos base URL del query para que corsproxy no pierda el payload
+  const payloadStr = JSON.stringify(data);
+  const encoded    = encodeURIComponent(payloadStr);
+
+  // corsproxy.io acepta la URL completa incluyendo query string
+  // La clave es NO double-encodear el query string
+  const gasUrl   = GAS_URL + '?payload=' + encoded;
+  // Encodear solo la parte del dominio + path, no el query
+  const gasBase  = GAS_URL;
+  const proxyUrl = 'https://corsproxy.io/?' + gasBase + '?payload=' + encoded;
+
+  const r = await fetch(proxyUrl, { method: 'GET' });
+  const text = await r.text();
+  let j;
+  try { j = JSON.parse(text); }
+  catch(_) { throw new Error('Error: ' + text.substring(0,150)); }
+  if (!j.ok) throw new Error(j.msg || 'Error del servidor');
+  return j;
+}
+
+// ═══════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════
+function toast(msg, type='i') {
+  const d = document.createElement('div');
+  d.className = 'toast '+type;
+  d.textContent = msg;
+  document.getElementById('tw').appendChild(d);
+  setTimeout(() => d.remove(), 3500);
+}
+function load(m='Cargando...') {
+  document.getElementById('ldr-msg').textContent = m;
+  document.getElementById('ldr').classList.add('on');
+}
+function unload() { document.getElementById('ldr').classList.remove('on'); }
+
+// ═══════════════════════════════════════
+// SPLASH → LOGIN
+// ═══════════════════════════════════════
+setTimeout(() => {
+  document.getElementById('s-splash').classList.remove('active');
+  document.getElementById('s-login').classList.add('active');
+}, 2200);
+
+// ═══════════════════════════════════════
+// PWA MANIFEST INLINE
+// ═══════════════════════════════════════
+const manifestData = {
+  name:'Gong Cha Ecuador',
+  short_name:'Gong Cha',
+  start_url:'/',
+  display:'standalone',
+  background_color:'#080810',
+  theme_color:'#C8102E',
+  icons:[{src:'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 rx=%22120%22 fill=%22%23C8102E%22/><text x=%2250%%25%22 y=%2258%%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-size=%22280%22 fill=%22white%22>珍</text></svg>',sizes:'512x512',type:'image/svg+xml'}]
+};
+const blob = new Blob([JSON.stringify(manifestData)], {type:'application/json'});
+const mUrl = URL.createObjectURL(blob);
+const link = document.createElement('link');
+link.rel='manifest'; link.href=mUrl;
+document.head.appendChild(link);
+
+// SW
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const C='gc-v4';
+    self.addEventListener('install',e=>{ self.skipWaiting(); });
+    self.addEventListener('activate',e=>{ self.clients.claim(); });
+    self.addEventListener('fetch',e=>{
+      if(e.request.url.includes('script.google.com')||e.request.url.includes('fonts.')) return;
+      e.respondWith(caches.open(C).then(c=>c.match(e.request).then(r=>r||fetch(e.request).then(res=>{c.put(e.request,res.clone());return res;}))));
+    });`;
+  const swBlob = new Blob([swCode],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+}
+</script>
+</body>
+</html>
