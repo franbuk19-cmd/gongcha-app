@@ -1,118 +1,178 @@
-
-Show proxy.js content
-
-Show proxy.js content
 bash
 
-cat /mnt/user-data/outputs/gongcha-deploy/netlify/functions/proxy.js
-Salida
+cat > /tmp/proxy_clean.js << 'EOF'
+const https = require("https");
+const http = require("http");
 
-const https = require('https');
-const http  = require('http');
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzYUmZQsyBi47tjfDeckYRbmOeT3Rp0ZKOZGURpTdqS9ixNpwYt7sn0a0SQ9ivAoxU_/exec";
 
-const GAS_BASE = 'https://script.google.com/macros/s/AKfycbzYUmZQsyBi47tjfDeckYRbmOeT3Rp0ZKOZGURpTdqS9ixNpwYt7sn0a0SQ9ivAoxU_/exec';
-
-exports.handler = async (event) => {
-  const cors = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': '*'
+exports.handler = function(event, context, callback) {
+  var cors = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*"
   };
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers: cors, body: '' };
+  if (event.httpMethod === "OPTIONS") {
+    callback(null, { statusCode: 200, headers: cors, body: "" });
+    return;
   }
 
+  var payload = {};
   try {
-    let payload = {};
-    const raw = event.queryStringParameters && event.queryStringParameters.payload;
+    var raw = event.queryStringParameters && event.queryStringParameters.payload;
     if (raw) {
-      try { payload = JSON.parse(decodeURIComponent(raw)); } catch(_) {}
+      payload = JSON.parse(decodeURIComponent(raw));
     } else if (event.body) {
-      try { payload = JSON.parse(event.body); } catch(_) {}
+      payload = JSON.parse(event.body);
     }
+  } catch(e) {}
 
-    // Ping responde directo sin llamar a Google
-    if (!payload.action || payload.action === 'ping') {
-      return {
-        statusCode: 200,
-        headers: cors,
-        body: JSON.stringify({ ok: true, msg: 'OK — Gong Cha proxy v2 — ' + new Date().toISOString() })
-      };
-    }
-
-    // Llamar a Google con POST esta vez
-    const gasBody = JSON.stringify(payload);
-    const gasResponse = await postToGAS(GAS_BASE, gasBody);
-
-    let result;
-    try {
-      result = JSON.parse(gasResponse);
-    } catch(_) {
-      return {
-        statusCode: 200,
-        headers: cors,
-        body: JSON.stringify({ 
-          ok: false, 
-          msg: 'Google respondio texto plano',
-          raw: gasResponse.substring(0, 500)
-        })
-      };
-    }
-
-    return { statusCode: 200, headers: cors, body: JSON.stringify(result) };
-
-  } catch (err) {
-    return {
+  if (!payload.action || payload.action === "ping") {
+    callback(null, {
       statusCode: 200,
       headers: cors,
-      body: JSON.stringify({ ok: false, msg: 'Proxy error: ' + err.message })
-    };
+      body: JSON.stringify({ ok: true, msg: "OK Gong Cha proxy " + new Date().toISOString() })
+    });
+    return;
   }
-};
 
-function postToGAS(url, body) {
-  return new Promise(function(resolve, reject) {
-    var redirects = 0;
+  var gasBody = JSON.stringify(payload);
+  var urlObj = require("url").parse(GAS_URL);
 
-    function req(u, method, postBody) {
-      var urlObj = new URL(u);
-      var options = {
-        hostname: urlObj.hostname,
-        path: urlObj.pathname + urlObj.search,
-        method: method || 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': postBody ? Buffer.byteLength(postBody) : 0,
-          'User-Agent': 'Mozilla/5.0'
-        }
-      };
+  var options = {
+    hostname: urlObj.hostname,
+    path: urlObj.path,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Content-Length": Buffer.byteLength(gasBody),
+      "User-Agent": "Mozilla/5.0"
+    }
+  };
 
-      var lib = u.startsWith('https') ? https : http;
-      var request = lib.request(options, function(res) {
-        // Seguir redirects con GET (comportamiento estándar de browser)
-        if ([301,302,303,307,308].indexOf(res.statusCode) >= 0 && res.headers.location) {
-          if (++redirects > 8) { reject(new Error('Too many redirects')); return; }
-          var next = res.headers.location.startsWith('http')
-            ? res.headers.location
-            : 'https://script.google.com' + res.headers.location;
-          // Despues de redirect usar GET
-          req(next, 'GET', null);
+  var redirectCount = 0;
+
+  function doRequest(opts, body) {
+    var lib = opts.protocol === "http:" ? http : https;
+    var req = lib.request(opts, function(res) {
+      if ([301,302,303,307,308].indexOf(res.statusCode) >= 0 && res.headers.location) {
+        if (++redirectCount > 8) {
+          callback(null, { statusCode: 200, headers: cors, body: JSON.stringify({ ok: false, msg: "Too many redirects" }) });
           return;
         }
-
-        var data = '';
-        res.on('data', function(c) { data += c; });
-        res.on('end', function() { resolve(data); });
-        res.on('error', reject);
+        var loc = res.headers.location;
+        var newUrl = require("url").parse(loc.startsWith("http") ? loc : "https://script.google.com" + loc);
+        doRequest({ hostname: newUrl.hostname, path: newUrl.path, method: "GET", headers: { "User-Agent": "Mozilla/5.0" }, protocol: newUrl.protocol }, null);
+        return;
+      }
+      var data = "";
+      res.on("data", function(c) { data += c; });
+      res.on("end", function() {
+        var result;
+        try { result = JSON.parse(data); } catch(e) { result = { ok: false, msg: "Bad JSON: " + data.substring(0, 200) }; }
+        callback(null, { statusCode: 200, headers: cors, body: JSON.stringify(result) });
       });
+    });
+    req.on("error", function(e) {
+      callback(null, { statusCode: 200, headers: cors, body: JSON.stringify({ ok: false, msg: e.message }) });
+    });
+    if (body) req.write(body);
+    req.end();
+  }
 
-      request.on('error', reject);
-      if (postBody && method === 'POST') request.write(postBody);
-      request.end();
+  options.protocol = "https:";
+  doRequest(options, gasBody);
+};
+EOF
+cat /tmp/proxy_clean.js
+Salida
+
+const https = require("https");
+const http = require("http");
+
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzYUmZQsyBi47tjfDeckYRbmOeT3Rp0ZKOZGURpTdqS9ixNpwYt7sn0a0SQ9ivAoxU_/exec";
+
+exports.handler = function(event, context, callback) {
+  var cors = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*"
+  };
+
+  if (event.httpMethod === "OPTIONS") {
+    callback(null, { statusCode: 200, headers: cors, body: "" });
+    return;
+  }
+
+  var payload = {};
+  try {
+    var raw = event.queryStringParameters && event.queryStringParameters.payload;
+    if (raw) {
+      payload = JSON.parse(decodeURIComponent(raw));
+    } else if (event.body) {
+      payload = JSON.parse(event.body);
     }
+  } catch(e) {}
 
-    req(url, 'POST', body);
-  });
-}
+  if (!payload.action || payload.action === "ping") {
+    callback(null, {
+      statusCode: 200,
+      headers: cors,
+      body: JSON.stringify({ ok: true, msg: "OK Gong Cha proxy " + new Date().toISOString() })
+    });
+    return;
+  }
+
+  var gasBody = JSON.stringify(payload);
+  var urlObj = require("url").parse(GAS_URL);
+
+  var options = {
+    hostname: urlObj.hostname,
+    path: urlObj.path,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Content-Length": Buffer.byteLength(gasBody),
+      "User-Agent": "Mozilla/5.0"
+    }
+  };
+
+  var redirectCount = 0;
+
+  function doRequest(opts, body) {
+    var lib = opts.protocol === "http:" ? http : https;
+    var req = lib.request(opts, function(res) {
+      if ([301,302,303,307,308].indexOf(res.statusCode) >= 0 && res.headers.location) {
+        if (++redirectCount > 8) {
+          callback(null, { statusCode: 200, headers: cors, body: JSON.stringify({ ok: false, msg: "Too many redirects" }) });
+          return;
+        }
+        var loc = res.headers.location;
+        var newUrl = require("url").parse(loc.startsWith("http") ? loc : "https://script.google.com" + loc);
+        doRequest({ hostname: newUrl.hostname, path: newUrl.path, method: "GET", headers: { "User-Agent": "Mozilla/5.0" }, protocol: newUrl.protocol }, null);
+        return;
+      }
+      var data = "";
+      res.on("data", function(c) { data += c; });
+      res.on("end", function() {
+        var result;
+        try { result = JSON.parse(data); } catch(e) { result = { ok: false, msg: "Bad JSON: " + data.substring(0, 200) }; }
+        callback(null, { statusCode: 200, headers: cors, body: JSON.stringify(result) });
+      });
+    });
+    req.on("error", function(e) {
+      callback(null, { statusCode: 200, headers: cors, body: JSON.stringify({ ok: false, msg: e.message }) });
+    });
+    if (body) req.write(body);
+    req.end();
+  }
+
+  options.protocol = "https:";
+  doRequest(options, gasBody);
+};
+Listo
+Copia ese código completo, ve a GitHub → netlify/functions/proxy.js → edita → borra todo → pega el nuevo → Commit changes.
+
+Netlify redesplegará automáticamente. ¿Lo hiciste?
+
+
+
